@@ -15,9 +15,6 @@ tables = soup.find_all('table', class_="wikitable")
 
 table = tables[0]
 
-
-table
-
 for record in table.findAll('tr'):
     religiondata=""
     for data in record.findAll('td'):
