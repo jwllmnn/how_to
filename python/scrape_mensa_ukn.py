@@ -25,66 +25,6 @@ for key in dict_of_tabs:
         dict_of_tabs[key] =span.get_text()
 
 
-for d in dict_of_tabs:
-    if dict_of_tabs[d] is not None:
-        print(d + ":", dict_of_tabs.get(d))
-
-
-monday = soup.find('div', {'id': 'tab1'})
-
-# title.
-title = monday.find('div', {'class': 'title'}).get_text()
-
-for t in monday.find_all('div', {'class': 'title'}):
-    title_clean = re.sub(' +', ' ', re.sub(r'\([^)]*\)', '', t.get_text()))
-    print(title_clean)
-    price = re.search(r'(100g /)* \d,\d\d Euro', title_clean)
-    title_exclude_price = re.sub(r'(100g /)* \d,\d\d Euro', '',title_clean)
-    print(title_exclude_price)
-    if price is not None:
-        print("Price:", price.group(0))
-    else:
-        print("Price: None")
-
-    title_list = [x.strip() for x in re.split(', | und ', title_clean)]
-
-
-
-
-title_clean = re.sub(' +',' ', re.sub(r'\([^)]*\)','', title))
-title_list = [x.strip() for x in re.split(', | und ',title_clean)]
-
-# category.
-cat = monday.find('div', {'class': 'category'}).get_text()
-cat_clean = re.sub(' +',' ', re.sub(r'\([^)]*\)','', cat))
-
-
-print("Preise:\t", monday.find('div', {'class': 'preise'}).get_text().split("|"))
-
-# price.
-if monday.find('div', {'class': 'preise'}) is not None:
-    price = re.sub(' +',' ', monday.find('div', {'class': 'preise'}).get_text()).split(" | ")
-    for p in price:
-        if "Studierende" in p:
-            student_price = float(re.sub(r'€ Studierende', '', p).replace(',', '.'))
-        if "Schüler" in p:
-            schueler_price = float(re.sub(r'€ Schüler', '', p).replace(',', '.'))
-        if "Mitarbeiter" in p:
-            mitarbeiter_price = float(re.sub(r'€ Mitarbeiter', '', p).replace(',', '.'))
-        if "Gäste" in p:
-            gaeste_price = float(re.sub(r'€ Gäste', '', p).replace(',', '.'))
-
-else:
-    student_price = None
-    schueler_price = None
-    mitarbeiter_price = None
-    gaeste_price = None
-
-print("Preise:")
-print("Studierende:", student_price)
-print("Schüler", schueler_price)
-print("Mitarbeiter", mitarbeiter_price)
-print("Gäste", gaeste_price)
 
 # Iterate over each tab (day).
 for key in dict_of_tabs:
@@ -104,7 +44,7 @@ for key in dict_of_tabs:
         # Extract type/category of meal. E.g. Stammessen, Vegetarisch, etc.
         cat = i.find('div', {'class': 'category'}).get_text()
         cat_clean = re.sub(' +', ' ', re.sub(r'\([^)]*\)', '', cat))
-        print("Category:\t", cat_clean)
+        print("Category:\t\t", cat_clean)
 
         # Extract meal name.
         title = i.find('div', {'class': 'title'}).get_text()
@@ -119,7 +59,7 @@ for key in dict_of_tabs:
         else:
             alt_price = None
 
-        print("Meal:\t", title_list)
+        print("Meal:\t\t\t", title_list)
 
 
 
@@ -142,22 +82,11 @@ for key in dict_of_tabs:
             mitarbeiter_price = alt_price
             gaeste_price = alt_price
 
-        print("Preise:")
-        print("Studierende:", student_price)
-        print("Schüler", schueler_price)
-        print("Mitarbeiter", mitarbeiter_price)
-        print("Gäste", gaeste_price)
+        print("Studierende:\t", student_price)
+        print("Schüler:\t\t", schueler_price)
+        print("Mitarbeiter:\t", mitarbeiter_price)
+        print("Gäste:\t\t\t", gaeste_price)
         print("")
 
     print(" ")
 
-
-
-tuesday = soup.find('div', {'id': 'tab2'})
-
-children = monday.findChildren()
-for child in children:
-    print("--------------------------")
-    if child.find()
-
-tables = soup.find_all('table')
