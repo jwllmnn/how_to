@@ -32,14 +32,34 @@ for d in dict_of_tabs:
 
 monday = soup.find('div', {'id': 'tab1'})
 
+title = monday.find('div', {'class': 'title'}).get_text()
+title_clean = re.sub(' +',' ', re.sub(r'\([^)]*\)','', title))
+title_list = [x.strip() for x in re.split(', | und ',title_clean)]
 
+cat = monday.find('div', {'class': 'category'}).get_text()
+cat_clean = re.sub(' +',' ', re.sub(r'\([^)]*\)','', cat))
+
+
+
+
+
+# Iterate over each tab (day).
 for key in dict_of_tabs:
+
+    # Get soup for day.
     day = soup.find('div', {'id': key})
 
     print("-----------------------------------------------------------------")
     print("On", dict_of_tabs.get(key), "the following meals will be served: ")
+
+    # Find section of soup that gives the Speiseplan.
     speiseplan = day.find_all('div', {'class': 'speiseplanTagKat'})
+
+    # Iterate over each meal option in Speiseplan.
     for i in speiseplan:
+
+        # Extract type/category of meal. E.g. Stammessen, Vegetarisch, etc.
+        cat = i.find('div', {'class': 'category'}).get_text().split(",")
         print("Categ.:\t", i.find('div', {'class': 'category'}).get_text().split(","))
         print("Meal:\t", i.find('div', {'class': 'title'}).get_text().split(", "))
         if i.find('div', {'class': 'preise'}) is not None:
