@@ -32,16 +32,59 @@ for d in dict_of_tabs:
 
 monday = soup.find('div', {'id': 'tab1'})
 
+# title.
 title = monday.find('div', {'class': 'title'}).get_text()
+
+for t in monday.find_all('div', {'class': 'title'}):
+    title_clean = re.sub(' +', ' ', re.sub(r'\([^)]*\)', '', t.get_text()))
+    print(title_clean)
+    price = re.search(r'(100g /)* \d,\d\d Euro', title_clean)
+    title_exclude_price = re.sub(r'(100g /)* \d,\d\d Euro', '',title_clean)
+    print(title_exclude_price)
+    if price is not None:
+        print("Price:", price.group(0))
+    else:
+        print("Price: None")
+
+    title_list = [x.strip() for x in re.split(', | und ', title_clean)]
+
+
+
+
 title_clean = re.sub(' +',' ', re.sub(r'\([^)]*\)','', title))
 title_list = [x.strip() for x in re.split(', | und ',title_clean)]
 
+# category.
 cat = monday.find('div', {'class': 'category'}).get_text()
 cat_clean = re.sub(' +',' ', re.sub(r'\([^)]*\)','', cat))
 
 
+print("Preise:\t", monday.find('div', {'class': 'preise'}).get_text().split("|"))
 
+# price.
+if monday.find('div', {'class': 'preise'}) is not None:
+    price = re.sub(' +',' ', monday.find('div', {'class': 'preise'}).get_text()).split(" | ")
+    for p in price:
+        if "Studierende" in p:
+            student_price = float(re.sub(r'€ Studierende', '', p).replace(',', '.'))
+        if "Schüler" in p:
+            schueler_price = float(re.sub(r'€ Schüler', '', p).replace(',', '.'))
+        if "Mitarbeiter" in p:
+            mitarbeiter_price = float(re.sub(r'€ Mitarbeiter', '', p).replace(',', '.'))
+        if "Gäste" in p:
+            gaeste_price = float(re.sub(r'€ Gäste', '', p).replace(',', '.'))
 
+else:
+    student_price = None
+    schueler_price = None
+    mitarbeiter_price = None
+    gaeste_price = None
+
+print("Preise:")
+print("Studierende:", student_price)
+print("Schüler", schueler_price)
+print("Mitarbeiter", mitarbeiter_price)
+print("Gäste", gaeste_price)
 
 # Iterate over each tab (day).
 for key in dict_of_tabs:
@@ -59,13 +102,53 @@ for key in dict_of_tabs:
     for i in speiseplan:
 
         # Extract type/category of meal. E.g. Stammessen, Vegetarisch, etc.
-        cat = i.find('div', {'class': 'category'}).get_text().split(",")
-        print("Categ.:\t", i.find('div', {'class': 'category'}).get_text().split(","))
-        print("Meal:\t", i.find('div', {'class': 'title'}).get_text().split(", "))
+        cat = i.find('div', {'class': 'category'}).get_text()
+        cat_clean = re.sub(' +', ' ', re.sub(r'\([^)]*\)', '', cat))
+        print("Category:\t", cat_clean)
+
+        # Extract meal name.
+        title = i.find('div', {'class': 'title'}).get_text()
+        title_clean = re.sub(' +', ' ', re.sub(r'\([^)]*\)', '', title))
+        title_exclude_price = re.sub(r'(100g /)* \d,\d\d Euro', '', title_clean)
+        alternative_price = re.search(r'(100g /)* \d,\d\d Euro', title_clean)
+        title_list = [x.strip() for x in re.split(', | und ', title_exclude_price)]
+
+
+        if alternative_price is not None:
+            alt_price = alternative_price.group(0)
+        else:
+            alt_price = None
+
+        print("Meal:\t", title_list)
+
+
+
+        # Extract meal pricing.
         if i.find('div', {'class': 'preise'}) is not None:
-            print("Preise:\t", i.find('div', {'class': 'preise'}).get_text().split("|"))
-        else: print("Preise:\t - ")
-        print(" ")
+            price = re.sub(' +', ' ', i.find('div', {'class': 'preise'}).get_text()).split(" | ")
+            for p in price:
+                if "Studierende" in p:
+                    student_price = float(re.sub(r'€ Studierende', '', p).replace(',', '.'))
+                if "Schüler" in p:
+                    schueler_price = float(re.sub(r'€ Schüler', '', p).replace(',', '.'))
+                if "Mitarbeiter" in p:
+                    mitarbeiter_price = float(re.sub(r'€ Mitarbeiter', '', p).replace(',', '.'))
+                if "Gäste" in p:
+                    gaeste_price = float(re.sub(r'€ Gäste', '', p).replace(',', '.'))
+
+        else:
+            student_price = alt_price
+            schueler_price = alt_price
+            mitarbeiter_price = alt_price
+            gaeste_price = alt_price
+
+        print("Preise:")
+        print("Studierende:", student_price)
+        print("Schüler", schueler_price)
+        print("Mitarbeiter", mitarbeiter_price)
+        print("Gäste", gaeste_price)
+        print("")
+
     print(" ")
 
 
